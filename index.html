@@ -1,54 +1,541 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ICML 2026 Poster</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --fg: #e8ecf1;
-      --muted: #9aa6b2;
-      --accent: #5b8cff;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 50% -10%, #1a2444 0%, var(--bg) 60%);
-      color: var(--fg);
-      text-align: center;
-      padding: 2rem;
-    }
-    main { max-width: 720px; }
-    .badge {
-      display: inline-block;
-      padding: 0.35rem 0.9rem;
-      border: 1px solid rgba(91, 140, 255, 0.5);
-      border-radius: 999px;
-      color: var(--accent);
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-    h1 {
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      margin: 0 0 1rem;
-      line-height: 1.1;
-    }
-    p { color: var(--muted); font-size: 1.1rem; line-height: 1.6; }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Belief-Aware Decision Transformers · ICML 2026</title>
+  <meta name="description" content="Interactive poster: Belief-Aware Decision Transformers for Offline-to-Online Decision-Making under Partial Observability: A Geosteering Case Study. Spotlight at the ICML 2026 Workshop on Decision-Making from Offline Datasets to Online Adaptation.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Belief-Aware Decision Transformers (ICML 2026 Workshop Spotlight)">
+  <meta property="og:description" content="A structured belief head feeding an action head, trained jointly inside a single offline Decision Transformer: a geosteering case study.">
+  <meta property="og:image" content="assets/img/poster-thumb.jpg">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='26' fill='%23f5f5f5' stroke='%23eae3d9' stroke-width='10'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%235a7e8b'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Poppins:wght@500;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>document.documentElement.classList.add("js")</script>
 </head>
 <body>
-  <main>
-    <span class="badge">ICML 2026</span>
-    <h1>Poster Website</h1>
-    <p>Coming soon.</p>
-  </main>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ============================ HEADER ============================ -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-card">
+      <div class="logo-panel">
+        <img class="logo-icml" src="assets/img/logo-icml.png" alt="ICML: International Conference on Machine Learning" width="900" height="293">
+        <div class="logo-row">
+          <img class="logo-norce" src="assets/img/logo-norce.png" alt="NORCE" width="981" height="281">
+          <img class="logo-uis" src="assets/img/logo-uis.png" alt="University of Stavanger" width="250" height="344">
+        </div>
+      </div>
+      <div class="hero-text">
+        <span class="badge">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
+          Spotlight · ICML 2026 Workshop
+        </span>
+        <h1>Belief-Aware Decision Transformers for Offline-to-Online Decision-Making under Partial Observability: A Geosteering Case Study</h1>
+        <p class="authors">Hibat Errahmen Djecta<sup>1,2</sup>, Sergey Alyaev<sup>1</sup>, Kristian Fossum<sup>1</sup>, and Reidar B.&nbsp;Bratvold<sup>2</sup></p>
+        <p class="affil">
+          <sup>1</sup>&nbsp;NORCE Research AS, Nygårdsgaten 112, 5008 Bergen, Norway<br>
+          <sup>2</sup>&nbsp;University of Stavanger, Kjell Arholms gate 41, 4021 Stavanger, Norway
+        </p>
+        <p class="venue">Accepted as <strong>Spotlight</strong> at: ICML 2026 Workshop on Decision-Making from Offline Datasets to Online Adaptation: Black-Box Optimization to Reinforcement Learning, Seoul, South Korea</p>
+        <div class="hero-actions">
+          <button class="btn primary" type="button" data-open="posterDlg">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+            View poster
+          </button>
+          <a class="btn" href="assets/ICML2026_poster.pdf" download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg>
+            Poster PDF
+          </a>
+          <button class="btn" type="button" data-open="citeDlg">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 6h4v4.5C11 14 9.4 16.6 6.5 18l-.9-1.6C7.3 15.3 8 13.9 8.1 12H7zm8 0h4v4.5c0 3.5-1.6 6.1-4.5 7.5l-.9-1.6c1.7-1.1 2.4-2.5 2.5-4.4H15z"/></svg>
+            Cite
+          </button>
+          <!-- Add links here once they are public, e.g.:
+          <a class="btn" href="https://openreview.net/forum?id=XXXX">Paper</a>
+          <a class="btn" href="https://github.com/USER/REPO">Code</a>
+          -->
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ NAV ============================ -->
+<nav class="toc" aria-label="Poster sections">
+  <div class="wrap">
+    <div class="toc-inner">
+      <a href="#intro" data-sec="intro"><span class="n">1</span>Introduction</a>
+      <a href="#formulation" data-sec="formulation"><span class="n">2</span>Formulation</a>
+      <a href="#approach" data-sec="approach"><span class="n">3</span>Approach</a>
+      <a href="#results" data-sec="results"><span class="n">4</span>Results</a>
+      <a href="#discussion" data-sec="discussion"><span class="n">5</span>Discussion</a>
+      <a href="#conclusion" data-sec="conclusion"><span class="n">6</span>Conclusion</a>
+      <a href="#references" data-sec="references"><span class="n">“</span>References</a>
+    </div>
+  </div>
+  <div class="progress" aria-hidden="true"><i></i></div>
+</nav>
+
+<main id="main" class="wrap">
+  <div class="board">
+
+    <!-- ============================ 1. INTRODUCTION ============================ -->
+    <section class="sec reveal" id="intro" aria-labelledby="h-intro">
+      <div class="sec-head"><span class="sec-num" aria-hidden="true">1</span><h2 class="sec-tab" id="h-intro">Introduction</h2></div>
+      <div class="panel">
+        <p class="just">Many decisions must be made from noisy, indirect observations of a hidden state. Decision Transformers (DTs) learn offline policies from trajectories, but keep their hidden state implicit: hard to inspect, calibrate, or adapt online. Classical filters give interpretable beliefs, but estimate them separately from the decision, creating a mismatch between what is estimated and what is useful.</p>
+
+        <h3 class="sub challenges-title">Key challenges: <img src="assets/icons/challenges.png" alt="" width="256" height="256"></h3>
+        <div class="challenges">
+          <ul class="challenge-list">
+            <li><details class="challenge">
+              <summary>Hidden state implicit inside the sequence model</summary>
+              <div class="answer">→ A <b>belief head</b> makes the decision-relevant state explicit: predicted distances to the reservoir boundaries. <a href="#approach">See §3</a></div>
+            </details></li>
+            <li><details class="challenge">
+              <summary>Belief estimation decoupled from decision quality</summary>
+              <div class="answer">→ Belief and action are <b>trained jointly</b> in one model, and the action head is conditioned on the belief. <a href="#approach">See §3</a></div>
+            </details></li>
+            <li><details class="challenge">
+              <summary>Cautious offline-to-online adaptation needed</summary>
+              <div class="answer">→ At deployment, <b>correct only the belief</b>: decision quality is restored without retraining. <a href="#correction">See §4</a></div>
+            </details></li>
+          </ul>
+        </div>
+        <p class="hint" style="margin:8px 0 0">Tap a challenge to see how the model addresses it.</p>
+
+        <div class="callout">
+          <h3>Our idea:</h3>
+          <p>Make hidden state explicit inside a single offline DT: a structured belief head feeding an action head, trained jointly.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ 2. FORMULATION ============================ -->
+    <section class="sec reveal" id="formulation" aria-labelledby="h-form">
+      <div class="sec-head"><span class="sec-num" aria-hidden="true">2</span><h2 class="sec-tab" id="h-form">Formulation</h2></div>
+      <div class="panel">
+        <div class="form-top">
+          <p class="just" style="margin:0">In geosteering, the agent operates with uncertain and partially observed geological information, receiving noisy sensor signals while its decisions influence future measurements and well placement. This interaction naturally fits a Partially Observable Markov Decision Process (POMDP), which captures both hidden subsurface states and their evolution under action. This structure is consistent with embodied world models, where an agent must infer latent dynamics and act based on how its decisions shape future observations.</p>
+          <img src="assets/icons/formula.png" alt="" width="256" height="256">
+        </div>
+
+        <div class="formula" aria-label="The POMDP is the tuple S, A, T, R, Omega, O, gamma">
+          <span class="cal">𝒫</span> = (<button class="f-el" type="button" data-k="S" style="--c:var(--c-states)">S</button>, <button class="f-el" type="button" data-k="A" style="--c:var(--c-actions)">A</button>, <button class="f-el" type="button" data-k="T" style="--c:var(--c-transition)">T</button>, <button class="f-el" type="button" data-k="R" style="--c:var(--c-reward)">R</button>, <button class="f-el up" type="button" data-k="Ω" style="--c:var(--c-obs);--on:#fff">Ω</button>, <button class="f-el" type="button" data-k="O" style="--c:var(--c-obsmodel)">O</button>, <button class="f-el" type="button" data-k="γ" style="--c:var(--c-discount)">γ</button>)
+        </div>
+
+        <div class="chevrons" id="chevrons">
+          <div class="chev-item" data-k="S"><button class="chev" type="button" style="--c:var(--c-states)"><span>States&nbsp;<span class="sym">S</span></span></button><p class="chev-desc">Reservoir top/ bottom boundaries and formation properties.</p></div>
+          <div class="chev-item" data-k="A"><button class="chev" type="button" style="--c:var(--c-actions)"><span>Actions&nbsp;<span class="sym">A</span></span></button><p class="chev-desc">Steering commands issued during drilling</p></div>
+          <div class="chev-item" data-k="T"><button class="chev" type="button" style="--c:var(--c-transition)"><span>Transition<br>Model&nbsp;<span class="sym">T</span></span></button><p class="chev-desc">Determines how the well position evolves after an action</p></div>
+          <div class="chev-item" data-k="R"><button class="chev" type="button" style="--c:var(--c-reward)"><span>Reward&nbsp;<span class="sym">R</span></span></button><p class="chev-desc">Measures drilling quality</p></div>
+          <div class="chev-item" data-k="Ω"><button class="chev" type="button" style="--c:var(--c-obs);--on:#fff"><span>Observation<br><span class="sym up">Ω</span></span></button><p class="chev-desc">Sensor readings such as gamma-ray logs</p></div>
+          <div class="chev-item" data-k="O"><button class="chev" type="button" style="--c:var(--c-obsmodel)"><span>Observation<br>Model&nbsp;<span class="sym">O</span></span></button><p class="chev-desc">Maps latent geological states to noisy observations produced by sensors.</p></div>
+          <div class="chev-item" data-k="γ"><button class="chev" type="button" style="--c:var(--c-discount)"><span>Discount<br>Factor&nbsp;<span class="sym">γ</span></span></button><p class="chev-desc">Encodes the importance of future rewards and long-horizon steering outcomes.</p></div>
+        </div>
+        <p class="hint" style="margin:14px 0 0">Hover or tap a symbol in 𝒫, or a chevron, to link the two.</p>
+      </div>
+    </section>
+
+    <!-- ============================ 3. APPROACH ============================ -->
+    <section class="sec reveal" id="approach" aria-labelledby="h-approach">
+      <div class="sec-head"><span class="sec-num" aria-hidden="true">3</span><h2 class="sec-tab" id="h-approach">Approach</h2></div>
+      <div class="panel">
+        <div class="approach-grid">
+          <div class="arch-col">
+            <div class="toolbar">
+              <button class="btn small primary" type="button" id="playFlow">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                <span>Play forward pass</span>
+              </button>
+              <span class="spacer"></span>
+              <span class="pill" id="archVariantPill"><i></i><span>Coupled Two-Head</span></span>
+            </div>
+            <div class="arch-card">
+              <div class="arch-scroll">
+                <svg class="arch" id="arch" viewBox="0 0 900 690" role="group" aria-labelledby="archTitle">
+                  <title id="archTitle">Architecture: a shared Decision Transformer encoder feeding a belief head and an action head</title>
+                  <defs>
+                    <marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a4542"/></marker>
+                  </defs>
+
+                  <!-- Sequence dataset -->
+                  <g class="part" data-part="dataset" tabindex="0" role="button" aria-label="Sequence Dataset">
+                    <rect class="hit" x="128" y="0" width="644" height="140" rx="10" fill="transparent" stroke="transparent"/>
+                    <image href="assets/icons/dataset.png" x="420" y="0" width="60" height="60"/>
+                    <text x="450" y="80" text-anchor="middle" font-size="17">Sequence Dataset</text>
+                    <line x1="398" y1="58" x2="142" y2="96" stroke="#4a4542" stroke-width="1.3"/>
+                    <line x1="502" y1="58" x2="758" y2="96" stroke="#4a4542" stroke-width="1.3"/>
+                    <g font-size="16" text-anchor="middle" stroke="#c2c2c2">
+                      <rect x="140" y="96" width="112" height="36" fill="#d9d9d9"/>
+                      <rect x="252" y="96" width="112" height="36" fill="#d9d9d9"/>
+                      <rect x="364" y="96" width="166" height="36" fill="#d9d9d9"/>
+                      <rect x="530" y="96" width="122" height="36" fill="#d9d9d9"/>
+                      <rect x="652" y="96" width="108" height="36" fill="#d9d9d9"/>
+                    </g>
+                    <g font-size="16" text-anchor="middle">
+                      <text x="196" y="120">state_t</text>
+                      <text x="308" y="120">action_t</text>
+                      <text x="447" y="120">return_to_go_t</text>
+                      <text x="591" y="120">state_t+1</text>
+                      <text x="706" y="120">done</text>
+                    </g>
+                  </g>
+                  <line x1="252" y1="132" x2="392" y2="166" stroke="#4a4542" stroke-width="1.3"/>
+                  <line x1="652" y1="132" x2="510" y2="166" stroke="#4a4542" stroke-width="1.3"/>
+
+                  <!-- DT box -->
+                  <rect x="16" y="166" width="868" height="514" rx="18" fill="#f4f4f4" stroke="#dcdcdc"/>
+                  <text x="40" y="203" font-size="22" font-weight="500">Decision Transformer</text>
+                  <image href="assets/icons/reward.png" x="584" y="174" width="32" height="32"/>
+                  <image href="assets/icons/state.png" x="654" y="174" width="32" height="32"/>
+                  <image href="assets/icons/action.png" x="724" y="174" width="32" height="32"/>
+
+                  <!-- tokens -->
+                  <g class="part" data-part="tokens" tabindex="0" role="button" aria-label="Input tokens R, S, a">
+                    <rect class="hit" x="150" y="210" width="630" height="62" rx="10" fill="transparent" stroke="transparent"/>
+                    <g id="tokenRow"></g>
+                  </g>
+
+                  <!-- embedding -->
+                  <g class="part" data-part="embed" tabindex="0" role="button" aria-label="Embedding and positional encoder">
+                    <rect class="hit" x="143" y="270" width="634" height="24" fill="transparent" stroke="transparent"/>
+                    <g id="embedRow"></g>
+                    <text x="786" y="270" font-size="13">Embedding +</text>
+                    <text x="786" y="285" font-size="13">Positional</text>
+                    <text x="786" y="300" font-size="13">encoder</text>
+                  </g>
+                  <g id="embedLinks" stroke="#9a9a9a" stroke-width="1"></g>
+
+                  <!-- encoder -->
+                  <g class="part" data-part="encoder" tabindex="0" role="button" aria-label="Shared Sequence Encoder">
+                    <rect class="hit" x="145" y="310" width="630" height="42" fill="#7e949b" stroke="transparent"/>
+                    <line x1="145" y1="310" x2="775" y2="310" stroke="#3e3935" stroke-width="2"/>
+                    <line x1="145" y1="352" x2="775" y2="352" stroke="#3e3935" stroke-width="2"/>
+                    <text x="460" y="338" text-anchor="middle" font-size="20" style="fill:#fff">Shared Sequence Encoder</text>
+                    <text x="64" y="338" font-size="22" style="fill:#777">· · · ·</text>
+                    <text x="792" y="338" font-size="22" style="fill:#777">· · · ·</text>
+                  </g>
+
+                  <line class="edge" data-e="enc-h" x1="460" y1="352" x2="460" y2="373" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+
+                  <!-- hidden state -->
+                  <g class="part" data-part="hidden" tabindex="0" role="button" aria-label="Hidden state h t">
+                    <rect class="hit" x="396" y="376" width="128" height="50" rx="3" fill="#5a7e8b" stroke="transparent"/>
+                    <text x="460" y="397" text-anchor="middle" font-size="17" style="fill:#fff" font-style="italic">h<tspan font-size="12" dy="4">t</tspan></text>
+                    <text x="460" y="417" text-anchor="middle" font-size="14" style="fill:#fff">Hidden State</text>
+                  </g>
+
+                  <line class="edge" data-e="h-b" x1="410" y1="426" x2="300" y2="461" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+                  <line class="edge" data-e="h-a" x1="510" y1="426" x2="620" y2="461" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+
+                  <!-- belief head -->
+                  <g class="part" data-part="belief-head" tabindex="0" role="button" aria-label="Belief head">
+                    <rect class="hit" x="190" y="464" width="170" height="50" rx="4" fill="#c4cbdc" stroke="#8f9ab5"/>
+                    <text x="275" y="486" text-anchor="middle" font-size="17">Belief Head</text>
+                    <text x="275" y="504" text-anchor="middle" font-size="12.5" style="fill:#5e5751">Structured Belief</text>
+                    <image href="assets/icons/belief.png" x="92" y="436" width="80" height="80"/>
+                  </g>
+
+                  <!-- action head -->
+                  <g class="part" data-part="action-head" tabindex="0" role="button" aria-label="Action head">
+                    <rect class="hit" x="560" y="464" width="190" height="50" rx="4" fill="#c5cdd1" stroke="#8fa0a6"/>
+                    <text x="655" y="486" text-anchor="middle" font-size="17">Action Head</text>
+                    <text x="655" y="504" text-anchor="middle" font-size="12.5" style="fill:#5e5751" id="actSub">Conditioned on h_t + b̂_t</text>
+                    <image href="assets/icons/action.png" x="768" y="436" width="80" height="80"/>
+                  </g>
+
+                  <g class="edge" data-e="b-a">
+                    <line x1="360" y1="489" x2="557" y2="489" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+                    <text x="452" y="511" font-size="16" font-style="italic">b<tspan font-size="11.5" dy="4">t</tspan></text>
+                    <text x="451.5" y="497" font-size="12" font-style="normal">^</text>
+                  </g>
+
+                  <line class="edge" data-e="bh-b" x1="275" y1="514" x2="275" y2="536" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+                  <line class="edge" data-e="ah-a" x1="655" y1="514" x2="655" y2="536" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+
+                  <!-- belief readout -->
+                  <g class="part" data-part="belief-out" tabindex="0" role="button" aria-label="Belief readout b hat t">
+                    <circle class="hit" cx="275" cy="560" r="21" fill="#eae3d9" stroke="#b9b0a4"/>
+                    <text x="275" y="567" text-anchor="middle" font-size="21" font-style="italic">b</text>
+                    <text x="276" y="553" text-anchor="middle" font-size="13">^</text>
+                    <text x="298" y="580" font-size="12.5">t</text>
+                    <text x="244" y="566" text-anchor="end" font-size="14.5">Belief Readout</text>
+                  </g>
+
+                  <!-- action output -->
+                  <g class="part" data-part="action-out" tabindex="0" role="button" aria-label="Model output a t">
+                    <circle class="hit" cx="655" cy="560" r="21" fill="#eae3d9" stroke="#b9b0a4"/>
+                    <text x="655" y="567" text-anchor="middle" font-size="21" font-style="italic">a</text>
+                    <text x="678" y="580" font-size="12.5">t</text>
+                    <text x="692" y="566" font-size="14.5">Model Output</text>
+                  </g>
+
+                  <line class="edge" data-e="b-bl" x1="275" y1="581" x2="275" y2="604" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+                  <line class="edge" data-e="a-al" x1="655" y1="581" x2="655" y2="604" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+
+                  <!-- losses -->
+                  <g class="part" data-part="belief-loss" tabindex="0" role="button" aria-label="Belief loss">
+                    <rect class="hit" x="190" y="606" width="170" height="46" rx="4" fill="#c4cbdc" stroke="#8f9ab5"/>
+                    <text x="275" y="626" text-anchor="middle" font-size="15.5">Belief Loss</text>
+                    <text x="275" y="643" text-anchor="middle" font-size="11.5" style="fill:#5e5751">vs Simulator Ground Truth</text>
+                  </g>
+                  <g class="part" data-part="action-loss" tabindex="0" role="button" aria-label="Action loss">
+                    <rect class="hit" x="560" y="606" width="190" height="46" rx="4" fill="#c5cdd1" stroke="#8fa0a6"/>
+                    <text x="655" y="626" text-anchor="middle" font-size="15.5">Action Loss</text>
+                    <text x="655" y="643" text-anchor="middle" font-size="11.5" style="fill:#5e5751">vs Offline action</text>
+                  </g>
+
+                  <line class="edge" data-e="bl-t" x1="360" y1="630" x2="379" y2="637" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+                  <line class="edge" data-e="al-t" x1="560" y1="630" x2="541" y2="637" stroke="#4a4542" stroke-width="1.6" marker-end="url(#ah)"/>
+
+                  <g class="part" data-part="total-loss" tabindex="0" role="button" aria-label="Total loss">
+                    <image href="assets/icons/loss.png" x="436" y="560" width="48" height="48"/>
+                    <rect class="hit" x="382" y="616" width="156" height="52" rx="3" fill="#5a7e8b" stroke="transparent"/>
+                    <text x="460" y="637" text-anchor="middle" font-size="15.5" style="fill:#fff">Total Loss</text>
+                    <text x="460" y="657" text-anchor="middle" font-size="12.5" style="fill:#fff" id="totalF">L = L<tspan font-size="9" dy="3">action</tspan><tspan dy="-3"> + λ</tspan><tspan font-size="9" dy="3">b</tspan><tspan dy="-3"> · L</tspan><tspan font-size="9" dy="3">belief</tspan></text>
+                  </g>
+                </svg>
+              </div>
+              <div class="arch-info" id="archInfo" aria-live="polite">
+                <strong>Explore the model</strong>
+                Click any block in the diagram to see what it does, or press <em>Play forward pass</em> to step through it. Pick a variant below to see what the action head receives.
+              </div>
+            </div>
+          </div>
+
+          <aside class="approach-side">
+            <div class="lead-block">
+              <p class="lead">A shared Decision Transformer encoder feeds a belief head (reservoir-boundary distances) and an action head conditioned on it, trained jointly via L = L<sub>action</sub> + λ<sub>b</sub> · L<sub>belief</sub>.</p>
+            </div>
+            <div class="cycle-card">
+              <div class="cycle" id="cycle">
+                <svg class="ring" viewBox="0 0 400 400" aria-hidden="true">
+                  <defs>
+                    <marker id="cyahT" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5a7e8b"/></marker>
+                    <marker id="cyah2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3e3935"/></marker>
+                  </defs>
+                  <circle cx="200" cy="200" r="168" fill="#eae3d9"/>
+                  <circle cx="200" cy="200" r="182" fill="none" stroke="#f4efe9" stroke-width="10"/>
+                  <path class="arc" data-arc="0"/>
+                  <path class="arc" data-arc="1"/>
+                  <path class="arc" data-arc="2"/>
+                </svg>
+                <div class="cycle-title">Geosteering as a sequential Decision Making Problem</div>
+                <button class="cstep" type="button" data-step="0"><img src="assets/icons/gather.png" alt="" width="256" height="256"><span>Gather Data</span></button>
+                <button class="cstep" type="button" data-step="1"><img src="assets/icons/analyse.png" alt="" width="256" height="256"><span>Analyse Data</span></button>
+                <button class="cstep" type="button" data-step="2"><img src="assets/icons/decide.png" alt="" width="256" height="256"><span>Make a Decision</span></button>
+              </div>
+              <div class="cycle-detail" id="cycleDetail" aria-live="polite"></div>
+              <div class="cycle-controls"><button class="btn small" type="button" id="cycleToggle" aria-pressed="true">Pause</button></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="variants" id="variants">
+          <div class="variants-head">
+            <p>We compare <b>4 variants</b> that differ only in what the action head sees.</p>
+            <span class="hint">Select one: the diagram above and the results below follow.</span>
+          </div>
+          <div class="variant-grid" id="variantGrid" role="group" aria-label="Model variants"></div>
+          <p class="legend-note">Solid arrow = feeds the action head · faded = computed but not used by the action</p>
+          <div class="vdetail" id="vdetail" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ 4. RESULTS ============================ -->
+    <section class="sec reveal" id="results" aria-labelledby="h-results">
+      <div class="sec-head"><span class="sec-num" aria-hidden="true">4</span><h2 class="sec-tab" id="h-results">Results</h2></div>
+      <div class="panel">
+        <div class="filter-row" id="filterRow" role="group" aria-label="Highlight a variant">
+          <span class="label">Highlight:</span>
+        </div>
+
+        <div class="dot-grid">
+          <figure class="chart-card" style="margin:0">
+            <h3>Val. action MSE <span class="dir">↓ lower is better</span></h3>
+            <div class="chart" id="chart-mse" data-metric="mse"></div>
+          </figure>
+          <figure class="chart-card" style="margin:0">
+            <h3>Reservoir Contact Ratio (RCR) <span class="dir">↑ higher is better</span></h3>
+            <div class="chart" id="chart-rcr" data-metric="rcr"></div>
+          </figure>
+          <figure class="chart-card" style="margin:0">
+            <h3>Boundary violations <span class="dir">↓ lower is better</span></h3>
+            <div class="chart" id="chart-viol" data-metric="viol"></div>
+          </figure>
+        </div>
+
+        <div class="results-text">
+          <div>
+            <div class="callout">
+              <p class="just">Conditioning the action on the predicted belief (<b>Coupled</b>) gives the best decisions, with the highest Reservoir Contact Ratio (RCR) and the fewest boundary violations. Simply adding the belief as an auxiliary task (<b>Parallel</b>) barely improves on the plain DT.</p>
+            </div>
+            <p class="just" style="margin-top:16px">On a shifted test set (gamma-ray noise doubled), correcting only the belief at deployment restores decision quality <b>without retraining</b>. Coupled leads offline, but Strict overtakes as more beliefs are corrected, since its action depends entirely on the belief, so corrections translate directly into better steering.</p>
+            <p class="hint">Dots show the mean; whiskers show the spread. Hover or tap a row for details, or click it to select that variant.</p>
+          </div>
+
+          <div class="corr-card" id="correction">
+            <div class="corr-head">
+              <h3>Online Belief Correction</h3>
+              <div class="legend" id="corrLegend" role="group" aria-label="Show or hide series"></div>
+            </div>
+            <div class="chart" id="chart-corr"></div>
+            <div class="p-control">
+              <label for="pSlider">Belief correction rate <span class="m">p</span></label>
+              <input class="p-slider" id="pSlider" type="range" min="0" max="3" step="1" value="0" aria-valuetext="p = 0.00">
+              <button class="btn small" type="button" id="pPlay">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                <span>Play</span>
+              </button>
+              <div class="p-ticks" aria-hidden="true"><span>0</span><span>0.05</span><span>0.10</span><span>0.20</span></div>
+            </div>
+            <div class="readout" id="readout" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <details class="data-table">
+          <summary>Show the numbers as a table</summary>
+          <div class="table-wrap" id="tables"></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============================ 5. DISCUSSION ============================ -->
+    <section class="sec reveal" id="discussion" aria-labelledby="h-disc">
+      <div class="sec-head"><span class="sec-num" aria-hidden="true">5</span><h2 class="sec-tab" id="h-disc">Discussion</h2></div>
+      <div class="panel">
+        <p class="just">Belief coupling is the main driver of decision quality. The Parallel model, where belief is only auxiliary, performs similarly to the baseline, while the Coupled model achieves the best RCR and fewest violations by using belief directly in the action pathway. The Strict model improves belief accuracy but loses offline decision quality because the compact belief cannot fully replace the richer hidden representation.</p>
+
+        <h3 class="insights-title">Key Insights</h3>
+        <div class="insights">
+          <article class="insight">
+            <div class="arrow-card" style="--c:var(--lav)"><img src="assets/icons/funnel.png" alt="" width="256" height="256"><span>Bottleneck</span></div>
+            <h4>Bottleneck improves calibration but reduces control quality:</h4>
+            <p>The Strict model predicts belief more accurately, but relying only on the compact belief removes useful information from the richer hidden state, reducing offline performance.</p>
+          </article>
+          <article class="insight">
+            <div class="arrow-card" style="--c:#d9d9d9"><img src="assets/icons/context.png" alt="" width="256" height="256"><span>Latent<br>Context</span></div>
+            <h4>Offline and online settings favor different designs:</h4>
+            <p>Coupled performs best offline because it uses both structured belief and latent context, while Strict benefits more from online belief correction because belief updates directly affect the actions.</p>
+          </article>
+        </div>
+
+        <div class="verdict">
+          <div class="verdict-head">
+            <h3>Which design wins?</h3>
+            <div class="seg" role="group" aria-label="Setting">
+              <button type="button" data-setting="offline" aria-pressed="true">Offline</button>
+              <button type="button" data-setting="online" aria-pressed="false">Online, p = 0.20</button>
+            </div>
+          </div>
+          <div class="verdict-body" id="verdictBody" aria-live="polite"></div>
+          <p class="verdict-note" id="verdictNote"></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="stack">
+      <!-- ============================ 6. CONCLUSION ============================ -->
+      <section class="sec reveal" id="conclusion" aria-labelledby="h-concl">
+        <div class="sec-head"><span class="sec-num" aria-hidden="true">6</span><h2 class="sec-tab" id="h-concl">Conclusion</h2></div>
+        <div class="panel">
+          <p class="just">A belief-aware Decision Transformer makes hidden, decision-relevant state explicit within an offline sequence model, keeping it interpretable and physically grounded.</p>
+          <h3 class="sub">Key takeaways:</h3>
+          <ul class="takeaways">
+            <li><span class="tick-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="none" stroke="#3e3935" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+              <div>Structured beliefs should inform but not entirely constrain offline policies <a href="#discussion">Evidence: Strict vs Coupled →</a></div></li>
+            <li><span class="tick-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="none" stroke="#3e3935" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+              <div>Coupled two-head = best balance of interpretability + decision quality <a href="#results">Evidence: offline results →</a></div></li>
+            <li><span class="tick-i" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="none" stroke="#3e3935" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+              <div>Physically meaningful belief = a natural interface for offline-to-online adaptation without retraining <a href="#correction">Evidence: belief correction →</a></div></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============================ REFERENCES ============================ -->
+      <section class="sec reveal" id="references" aria-labelledby="h-refs">
+        <div class="sec-head"><span class="sec-num" aria-hidden="true"><img src="assets/icons/quote.png" alt="" width="256" height="256"></span><h2 class="sec-tab" id="h-refs">References</h2></div>
+        <div class="panel">
+          <div class="refs-grid">
+            <ol class="refs" id="refs">
+              <li>Chen, L., Lu, K., Rajeswaran, A., Lee, K., Grover, A., Laskin, M., Abbeel, P., Srinivas, A., Mordatch, I. Decision transformer: Reinforcement learning via sequence modeling. Advances in Neural Information Processing Systems, 34, 15084–15097 (2021).</li>
+              <li>Djecta, H. E., Alyaev, S., Fossum, K., Bratvold, R. B., Muhammad, R. B., Srivastava, A. Uncertainty-aware well placement: Simulator-verified dual-network reinforcement learning approach meets particle filters. In Computational Science – ICCS 2025 Workshops, pp. 188–202. Springer Nature Switzerland (2025a).</li>
+              <li>Djecta, H. E., Alyaev, S., Fossum, K., Bratvold, R. B., Sui, D. Geosteering through the lens of decision transformers: Toward embodied sequence decision-making. NeurIPS 2025 Workshop on Embodied World Models for Decision Making (2025b).</li>
+              <li>Gangwani, T., Lehman, J., Liu, Q., Peng, J. Learning belief representations for imitation learning in POMDPs. arXiv:1906.09510 (2019).</li>
+              <li>Kaelbling, L. P., Littman, M. L., Cassandra, A. R. Planning and acting in partially observable stochastic domains. Artificial Intelligence, 101(1), 99–134 (1998).</li>
+              <li>Kullawan, K., Bratvold, R., Bickel, J. E. A decision analytic approach to geosteering operations. SPE Drilling &amp; Completion, (2014).</li>
+              <li>Muhammad, R. B., Srivastava, A., Alyaev, S., Bratvold, R. B., Tartakovsky, D. M. High-precision geosteering via reinforcement learning and particle filters. Computational Geosciences, (2025).</li>
+              <li>Muhammad, R. B., Alyaev, S., Bratvold, R. B. Optimal sequential decision-making in geosteering: A reinforcement learning approach. Geoenergy Science and Engineering, 258, 214304 (2026).</li>
+            </ol>
+            <div class="qr">
+              <img src="assets/img/qr.png" alt="QR code" width="480" height="480">
+              <span>Available On<br>your phone</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© 2026 H. E. Djecta, S. Alyaev, K. Fossum, R. B. Bratvold · NORCE &amp; University of Stavanger</span>
+    <a href="#top">Back to top ↑</a>
+  </div>
+</footer>
+
+<!-- Poster lightbox -->
+<dialog id="posterDlg" aria-labelledby="posterDlgTitle">
+  <div class="dlg-head">
+    <h2 id="posterDlgTitle">Poster</h2>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="hint">Click the poster to zoom</span>
+      <a class="btn small" href="assets/ICML2026_poster.pdf" download>PDF</a>
+      <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+  </div>
+  <div class="poster-view" id="posterView">
+    <img data-src="assets/img/poster.jpg" alt="The full ICML 2026 poster" width="2011" height="3000">
+  </div>
+</dialog>
+
+<!-- BibTeX dialog -->
+<dialog id="citeDlg" aria-labelledby="citeDlgTitle">
+  <div class="dlg-head">
+    <h2 id="citeDlgTitle">Cite this work</h2>
+    <button class="icon-btn" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="dlg-body">
+<pre class="bib" id="bibtex">@inproceedings{djecta2026beliefaware,
+  title     = {Belief-Aware Decision Transformers for Offline-to-Online
+               Decision-Making under Partial Observability:
+               A Geosteering Case Study},
+  author    = {Djecta, Hibat Errahmen and Alyaev, Sergey and
+               Fossum, Kristian and Bratvold, Reidar B.},
+  booktitle = {ICML 2026 Workshop on Decision-Making from Offline Datasets
+               to Online Adaptation: Black-Box Optimization to
+               Reinforcement Learning},
+  address   = {Seoul, South Korea},
+  year      = {2026},
+  note      = {Spotlight}
+}</pre>
+    <button class="btn primary small" type="button" id="copyBib">Copy BibTeX</button>
+  </div>
+</dialog>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/js/main.js" defer></script>
 </body>
 </html>
