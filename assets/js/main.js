@@ -949,8 +949,11 @@
     $$(".seg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.setting === setting)));
     $("#verdictBody").innerHTML = d.tiles.map((t) => {
       const v = V[t.id];
-      return `<div class="tile${t.win ? " win" : ""}">${t.win ? '<span class="crown">Wins</span>' : ""}` +
-        `<div class="tname">${swatch(v)}${v.full}</div><div class="big">${t.big}</div><div class="small">${t.small}</div></div>`;
+      // the badge sits next to the (short) number, in the normal flow, so it can never cover the name
+      return `<div class="tile${t.win ? " win" : ""}">` +
+        `<div class="tname">${swatch(v)}<span class="nm">${v.full}</span></div>` +
+        `<div class="big">${t.big}${t.win ? '<span class="crown">Wins</span>' : ""}</div>` +
+        `<div class="small">${t.small}</div></div>`;
     }).join("");
     $("#verdictNote").innerHTML = d.note;
   }
