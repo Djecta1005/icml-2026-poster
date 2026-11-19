@@ -72,6 +72,7 @@
     <div class="toc-inner">
       <a href="#intro" data-sec="intro"><span class="n">1</span>Introduction</a>
       <a href="#formulation" data-sec="formulation"><span class="n">2</span>Formulation</a>
+      <a href="#loop" data-sec="loop"><span class="n">↻</span>The loop</a>
       <a href="#approach" data-sec="approach"><span class="n">3</span>Approach</a>
       <a href="#results" data-sec="results"><span class="n">4</span>Results</a>
       <a href="#discussion" data-sec="discussion"><span class="n">5</span>Discussion</a>
@@ -143,20 +144,69 @@
       </div>
     </section>
 
+    <!-- ============================ THE LOOP (bridge between 2 and 3) ============================ -->
+    <section class="bridge reveal" id="loop" aria-labelledby="loopTitle">
+      <div class="bridge-text left">
+        <div class="kick-row"><span class="live-badge" id="liveBadge"><i></i>Live</span><button class="btn small" type="button" id="cycleToggle" aria-pressed="true">Pause</button><span class="kicker">↻ The loop</span></div>
+        <h2 id="loopTitle">Geosteering as a sequential Decision Making Problem</h2>
+        <div class="cycle-detail" id="cycleDetail" aria-live="polite"></div>
+      </div>
+
+      <div class="cycle" id="cycle">
+        <svg class="ring" viewBox="0 0 400 400" role="img" aria-label="A schematic well being steered through a reservoir, repeating gather, analyse and decide">
+          <defs>
+            <marker id="cyahT" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5a7e8b"/></marker>
+            <marker id="cyah2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3e3935"/></marker>
+            <clipPath id="sceneClip"><circle cx="200" cy="200" r="106"/></clipPath>
+            <linearGradient id="sandGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c873"/><stop offset="1" stop-color="#e3913f"/></linearGradient>
+            <pattern id="shalePat" width="12" height="7" patternUnits="userSpaceOnUse"><rect width="12" height="7" fill="#e6e0d6"/><path d="M0 3.5h12" stroke="#d8d0c3" stroke-width="1"/></pattern>
+          </defs>
+          <circle class="halo" id="cycHalo" cx="200" cy="200" r="190" fill="none" stroke="#5a7e8b" stroke-width="4"/>
+          <circle cx="200" cy="200" r="190" fill="#fff"/>
+          <circle cx="200" cy="200" r="174" fill="#eae3d9"/>
+          <g clip-path="url(#sceneClip)">
+            <rect x="90" y="90" width="220" height="220" fill="url(#shalePat)"/>
+            <path id="sResv" fill="url(#sandGrad)"/>
+            <path id="sTrue" fill="none" stroke="#a35f22" stroke-width="1.2"/>
+            <path id="sBand" fill="rgba(31,143,95,.22)"/>
+            <path id="sEst" fill="none" stroke="#17704a" stroke-width="1.8" stroke-dasharray="5 4"/>
+            <path id="sWell" fill="none" stroke="#3e3935" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="sPulse" fill="none" stroke="#3a717d" stroke-width="1.6"><circle r="0"/><circle r="0"/></g>
+            <path id="sSteer" fill="none" stroke="#b0484a" stroke-width="2.6" stroke-linecap="round"/>
+            <path id="sSteerHead" fill="#b0484a"/>
+            <g id="sBit"><circle r="5.8" fill="#3e3935" stroke="#fff" stroke-width="1.6"/><path id="sBitX" d="M-3.4 0H3.4M0-3.4V3.4" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></g>
+          </g>
+          <circle cx="200" cy="200" r="106" fill="none" stroke="#fff" stroke-width="3"/>
+          <path class="arc" data-arc="0"/>
+          <path class="arc" data-arc="1"/>
+          <path class="arc" data-arc="2"/>
+          <path class="arc-prog" id="arcProg" pathLength="1"/>
+          <circle class="comet" id="arcComet" r="7"/>
+        </svg>
+        <button class="cstep" type="button" data-step="0"><img src="assets/icons/gather.png" alt="" width="256" height="256"><span>Gather Data</span></button>
+        <button class="cstep" type="button" data-step="1"><img src="assets/icons/analyse.png" alt="" width="256" height="256"><span>Analyse Data</span></button>
+        <button class="cstep" type="button" data-step="2"><img src="assets/icons/decide.png" alt="" width="256" height="256"><span>Make a Decision</span></button>
+      </div>
+
+      <div class="bridge-text right">
+        <div class="kick-row start"><span class="kicker">Inside the circle</span><span class="hint">schematic, not model output</span></div>
+        <ul class="scene-legend">
+          <li><svg viewBox="0 0 28 14" aria-hidden="true"><rect x="0" y="2" width="28" height="10" fill="#f0b45e"/><path d="M0 2h28M0 12h28" stroke="#a35f22" stroke-width="1.4"/></svg><span>Reservoir and its true boundaries (hidden)</span></li>
+          <li><svg viewBox="0 0 28 14" aria-hidden="true"><rect x="0" y="3" width="28" height="8" fill="rgba(31,143,95,.25)"/><path d="M0 7h28" stroke="#17704a" stroke-width="1.8" stroke-dasharray="5 4"/></svg><span>Belief <span class="bhat">b</span><sub>t</sub>: estimated boundaries ± uncertainty</span></li>
+          <li><svg viewBox="0 0 28 14" aria-hidden="true"><path d="M1 10C10 10 16 6 22 6" stroke="#3e3935" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle cx="23" cy="6" r="3.4" fill="#3e3935"/></svg><span>Well path and drill bit</span></li>
+          <li><svg viewBox="0 0 28 14" aria-hidden="true"><circle cx="14" cy="7" r="3" fill="none" stroke="#3a717d" stroke-width="1.4"/><circle cx="14" cy="7" r="6.2" fill="none" stroke="#3a717d" stroke-width="1.2" opacity=".55"/></svg><span>Gamma-ray measurement</span></li>
+          <li><svg viewBox="0 0 28 14" aria-hidden="true"><path d="M3 10L20 5" stroke="#b0484a" stroke-width="2.4" stroke-linecap="round"/><path d="M25 3.6l-6.4-1.2 2 5.4z" fill="#b0484a"/></svg><span>Steering command a<sub>t</sub></span></li>
+        </ul>
+        <div class="cycle-map" id="cycleMap" aria-live="polite"></div>
+      </div>
+    </section>
+
     <!-- ============================ 3. APPROACH ============================ -->
     <section class="sec reveal" id="approach" aria-labelledby="h-approach">
       <div class="sec-head"><span class="sec-num" aria-hidden="true">3</span><h2 class="sec-tab" id="h-approach">Approach</h2></div>
       <div class="panel">
         <div class="approach-grid">
           <div class="arch-col">
-            <div class="toolbar">
-              <button class="btn small primary" type="button" id="playFlow">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-                <span>Play forward pass</span>
-              </button>
-              <span class="spacer"></span>
-              <span class="pill" id="archVariantPill"><i></i><span>Coupled Two-Head</span></span>
-            </div>
             <div class="arch-card">
               <div class="arch-scroll">
                 <svg class="arch" id="arch" viewBox="0 0 900 690" role="group" aria-labelledby="archTitle">
@@ -303,38 +353,22 @@
                   </g>
                 </svg>
               </div>
-              <div class="arch-info" id="archInfo" aria-live="polite">
+            </div>
+          </div>
+          <aside class="approach-side">
+            <p class="lead">A shared Decision Transformer encoder feeds a belief head (reservoir-boundary distances) and an action head conditioned on it, trained jointly via L = L<sub>action</sub> + λ<sub>b</sub> · L<sub>belief</sub>.</p>
+            <div class="toolbar">
+              <button class="btn small primary" type="button" id="playFlow">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                <span>Play forward pass</span>
+              </button>
+              <span class="spacer"></span>
+              <span class="pill" id="archVariantPill"><i></i><span>Coupled Two-Head</span></span>
+            </div>
+            <div class="arch-info" id="archInfo" aria-live="polite">
                 <strong>Explore the model</strong>
                 Click any block in the diagram to see what it does, or press <em>Play forward pass</em> to step through it. Pick a variant below to see what the action head receives.
               </div>
-            </div>
-          </div>
-
-          <aside class="approach-side">
-            <div class="lead-block">
-              <p class="lead">A shared Decision Transformer encoder feeds a belief head (reservoir-boundary distances) and an action head conditioned on it, trained jointly via L = L<sub>action</sub> + λ<sub>b</sub> · L<sub>belief</sub>.</p>
-            </div>
-            <div class="cycle-card">
-              <div class="cycle" id="cycle">
-                <svg class="ring" viewBox="0 0 400 400" aria-hidden="true">
-                  <defs>
-                    <marker id="cyahT" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5a7e8b"/></marker>
-                    <marker id="cyah2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3e3935"/></marker>
-                  </defs>
-                  <circle cx="200" cy="200" r="168" fill="#eae3d9"/>
-                  <circle cx="200" cy="200" r="182" fill="none" stroke="#f4efe9" stroke-width="10"/>
-                  <path class="arc" data-arc="0"/>
-                  <path class="arc" data-arc="1"/>
-                  <path class="arc" data-arc="2"/>
-                </svg>
-                <div class="cycle-title">Geosteering as a sequential Decision Making Problem</div>
-                <button class="cstep" type="button" data-step="0"><img src="assets/icons/gather.png" alt="" width="256" height="256"><span>Gather Data</span></button>
-                <button class="cstep" type="button" data-step="1"><img src="assets/icons/analyse.png" alt="" width="256" height="256"><span>Analyse Data</span></button>
-                <button class="cstep" type="button" data-step="2"><img src="assets/icons/decide.png" alt="" width="256" height="256"><span>Make a Decision</span></button>
-              </div>
-              <div class="cycle-detail" id="cycleDetail" aria-live="polite"></div>
-              <div class="cycle-controls"><button class="btn small" type="button" id="cycleToggle" aria-pressed="true">Pause</button></div>
-            </div>
           </aside>
         </div>
 

@@ -165,7 +165,7 @@
         }
       });
     }, { rootMargin: "-35% 0px -60% 0px" });
-    $$(".sec").forEach((s) => secObs.observe(s));
+    $$(".sec, .bridge").forEach((s) => secObs.observe(s));
 
     const revObs = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); revObs.unobserve(e.target); } });
@@ -451,64 +451,218 @@
   }
 
   /* ------------------------------------------------------------------------
-     §3 Cycle: Gather → Analyse → Decide
+     The loop (bridge between §2 and §3): Gather → Analyse → Decide.
+     The centre of the circle plays a schematic geosteering scene in sync.
      ------------------------------------------------------------------------ */
+  const STEP_MS = 3000;
   const STEPS = [
     { name: "Gather Data", angle: -90,
-      text: "While drilling, sensors return noisy, indirect measurements of the formation, such as gamma-ray logs: the observations <i>Ω</i>." },
+      text: "While drilling, sensors near the bit return noisy, indirect measurements of the formation, such as gamma-ray logs: the observations <i>Ω</i>.",
+      map: `<strong>In the formulation</strong>Observations <i>Ω</i>, produced from the hidden geology by the observation model <i>O</i>. <button type="button" class="goto" data-goto="form:Ω">Show in §2 →</button>` },
     { name: "Analyse Data", angle: 150,
-      text: "The measurements are interpreted to update the belief about the hidden geology: here, the distances to the reservoir boundaries (" + bh + ")." },
+      text: "The measurements update the belief about the hidden geology: the distances to the reservoir boundaries (" + bh + "). In the circle, the green band tightens.",
+      map: `<strong>In the model</strong>The belief head reads ${bh} out of the shared hidden state. <button type="button" class="goto" data-goto="arch:belief-head">Show in §3 →</button>` },
     { name: "Make a Decision", angle: 30,
-      text: "A steering command a<sub>t</sub> is issued. It moves the well, which changes the next measurements, and the loop repeats." },
+      text: "A steering command a<sub>t</sub> is issued. The well bends towards the middle of the believed reservoir and drills into new, uncertain ground, and the loop repeats.",
+      map: `<strong>In the model</strong>The action head outputs a<sub>t</sub>. Correcting ${bh} at deployment improves exactly this step. <button type="button" class="goto" data-goto="arch:action-head">Show in §3 →</button> · <button type="button" class="goto" data-goto="sec:correction">See §4 →</button>` },
   ];
   const cycle = $("#cycle");
-  const R = 138, C = 200, GAP = 33;
+  const R = 138, C = 200, GAP = 31;
   const pt = (deg) => [C + R * Math.cos((deg * Math.PI) / 180), C + R * Math.sin((deg * Math.PI) / 180)];
   const arcs = $$(".arc", cycle);
-  STEPS.forEach((s, i) => {
+  STEPS.forEach((st, i) => {
     const next = STEPS[(i + 1) % 3];
-    let a0 = s.angle - GAP, a1 = next.angle + GAP;
+    let a0 = st.angle - GAP, a1 = next.angle + GAP;
     if (a1 > a0) a1 -= 360; // always travel counter-clockwise on screen
     const [x0, y0] = pt(a0), [x1, y1] = pt(a1);
     arcs[i].setAttribute("d", `M${x0.toFixed(1)},${y0.toFixed(1)} A${R},${R} 0 ${a0 - a1 > 180 ? 1 : 0} 0 ${x1.toFixed(1)},${y1.toFixed(1)}`);
     arcs[i].setAttribute("marker-end", "url(#cyah2)");
-    const [bx, by] = pt(s.angle);
+    const [bx, by] = pt(st.angle);
     const btn = $(`.cstep[data-step="${i}"]`, cycle);
     btn.style.left = (bx / 400) * 100 + "%";
     btn.style.top = (by / 400) * 100 + "%";
   });
-  let cycIdx = 0, cycTimer = null, cycVisible = false;
+
+  // Schematic scene: a well drilled through a wavy reservoir, steered on a belief.
+  const Scene = (() => {
+    const el = (id) => document.getElementById(id);
+    const P = {
+      resv: el("sResv"), tru: el("sTrue"), band: el("sBand"), est: el("sEst"), well: el("sWell"),
+      pulse: $$("#sPulse circle"), steer: el("sSteer"), head: el("sSteerHead"), bit: el("sBit"), bitX: el("sBitX"),
+    };
+    const top = (x) => 176 + 17 * Math.sin(x / 41) + 7 * Math.sin(x / 17 + 1);
+    const bot = (x) => top(x) + 48 + 8 * Math.sin(x / 29 + 2);
+    const BIT = 160, LOOK = 96, SPEED = 12, X0 = 92, X1 = 308;
+    let seed = 11;
+    const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const s = { x: 0, y: 0, slope: 0, desired: 0, hist: [], bT: 9, bB: -8, tT: 0, tB: 0, sig: 10, drifting: false };
+    s.y = (top(0) + bot(0)) / 2;
+    const estT = (x) => top(x) + s.bT, estB = (x) => bot(x) + s.bB;
+    const ease = (v, target, rate, dt) => v + (target - v) * (1 - Math.exp(-rate * dt));
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+    function onPhase(i) {
+      if (i === 2) { // decide from the current belief: aim for the middle of the believed reservoir
+        const tx = s.x + LOOK;
+        s.desired = clamp(((estT(tx) + estB(tx)) / 2 - s.y) / LOOK, -0.6, 0.6);
+      }
+      if (i !== 2) s.drifting = false;
+    }
+    function step(dt, phase, t) {
+      s.x += SPEED * dt;
+      s.y += s.slope * SPEED * dt;
+      s.hist.push([s.x, s.y]);
+      while (s.hist.length > 2 && s.hist[1][0] < s.x - (BIT - X0) - 6) s.hist.shift();
+      if (phase === 1) {
+        s.bT = ease(s.bT, 0, 1.6, dt); s.bB = ease(s.bB, 0, 1.6, dt); s.sig = ease(s.sig, 2.5, 1.6, dt);
+      } else if (phase === 2) {
+        s.slope = ease(s.slope, s.desired, 2.2, dt);
+        if (t > STEP_MS * 0.45) { // drilling on into ground we have not measured yet
+          if (!s.drifting) { s.drifting = true; s.tT = (rand() * 2 - 1) * 13; s.tB = (rand() * 2 - 1) * 13; }
+          s.bT = ease(s.bT, s.tT, 1.1, dt); s.bB = ease(s.bB, s.tB, 1.1, dt); s.sig = ease(s.sig, 10, 1.1, dt);
+        }
+      }
+    }
+    function snap(i) { // reduced motion: jump straight to the end state of a phase
+      if (i === 1) { s.bT = 0; s.bB = 0; s.sig = 2.5; }
+      if (i === 2) s.slope = s.desired;
+    }
+    const wx = (px) => s.x + (px - BIT);
+    const fwd = (f, a, b) => { let d = ""; for (let p = a; p <= b + 0.01; p += 4) d += (d ? "L" : "M") + p.toFixed(1) + "," + f(wx(p)).toFixed(1); return d; };
+    const back = (f, a, b) => { let d = ""; for (let p = b; p >= a - 0.01; p -= 4) d += "L" + p.toFixed(1) + "," + f(wx(p)).toFixed(1); return d; };
+    function render(phase, t) {
+      P.resv.setAttribute("d", fwd(top, X0, X1) + back(bot, X0, X1) + "Z");
+      P.tru.setAttribute("d", fwd(top, X0, X1) + fwd(bot, X0, X1));
+      const g = s.sig;
+      P.band.setAttribute("d",
+        fwd((x) => estT(x) - g, BIT, X1) + back((x) => estT(x) + g, BIT, X1) + "Z" +
+        fwd((x) => estB(x) - g, BIT, X1) + back((x) => estB(x) + g, BIT, X1) + "Z");
+      P.est.setAttribute("d", fwd(estT, BIT, X1) + fwd(estB, BIT, X1));
+      P.well.setAttribute("d", s.hist.map(([x, y], k) => (k ? "L" : "M") + (BIT + x - s.x).toFixed(1) + "," + y.toFixed(1)).join(""));
+      P.bit.setAttribute("transform", `translate(${BIT} ${s.y.toFixed(1)})`);
+      P.bitX.setAttribute("transform", `rotate(${((s.x * 14) % 360).toFixed(1)})`); // the bit turns as it drills
+      P.pulse.forEach((c, k) => {
+        const u = ((t / 1150) + k * 0.5) % 1;
+        c.setAttribute("cx", BIT); c.setAttribute("cy", s.y.toFixed(1));
+        c.setAttribute("r", (5 + 30 * u).toFixed(1));
+        c.setAttribute("opacity", phase === 0 ? ((1 - u) * 0.9).toFixed(2) : "0");
+      });
+      if (phase === 2) {
+        const a = Math.atan(s.desired), L = 26, x2 = BIT + L * Math.cos(a), y2 = s.y + L * Math.sin(a);
+        const hx = x2 + 7 * Math.cos(a), hy = y2 + 7 * Math.sin(a), nx = -Math.sin(a) * 4.5, ny = Math.cos(a) * 4.5;
+        P.steer.setAttribute("d", `M${BIT + 6 * Math.cos(a)},${s.y + 6 * Math.sin(a)}L${x2},${y2}`);
+        P.head.setAttribute("d", `M${hx},${hy}L${x2 + nx},${y2 + ny}L${x2 - nx},${y2 - ny}Z`);
+      } else { P.steer.setAttribute("d", ""); P.head.setAttribute("d", ""); }
+    }
+    function warmup(loops) {
+      for (let l = 0; l < loops; l++) for (let i = 0; i < 3; i++) {
+        onPhase(i);
+        for (let t = 0; t < STEP_MS; t += 33) step(0.033, i, t);
+      }
+    }
+    return { onPhase, step, snap, render, warmup };
+  })();
+
+  let cycIdx = 0, cycVisible = false, phaseT = 0, boost = 0, raf = 0, last = 0, entered = false;
+  const halo = $("#cycHalo"), prog = $("#arcProg"), comet = $("#arcComet"), liveBadge = $("#liveBadge");
+  // A dot travels along the arrow towards the next step, filling it like a timer.
+  function updateProgress(running) {
+    cycle.classList.toggle("is-playing", running);
+    const arc = arcs[cycIdx];
+    const p = running ? Math.min(1, phaseT / STEP_MS) : 0;
+    prog.setAttribute("d", arc.getAttribute("d"));
+    prog.style.strokeDashoffset = String(1 - p);
+    const q = arc.getPointAtLength(p * arc.getTotalLength());
+    comet.setAttribute("cx", q.x.toFixed(1));
+    comet.setAttribute("cy", q.y.toFixed(1));
+  }
   const cycToggle = $("#cycleToggle");
   let cycPlaying = !reduceMotion;
   function showStep(i) {
-    cycIdx = i;
+    cycIdx = i; phaseT = 0;
+    Scene.onPhase(i);
     $$(".cstep", cycle).forEach((b, j) => {
       b.classList.toggle("is-on", j === i);
       b.setAttribute("aria-pressed", String(j === i));
     });
-    arcs.forEach((a, j) => {
-      const live = j === (i + 2) % 3;
-      a.classList.toggle("is-live", live);
-      a.setAttribute("marker-end", live ? "url(#cyahT)" : "url(#cyah2)");
-    });
+    if (cycPlaying || boost > 0) { // ripple around the ring on every step change
+      halo.classList.toggle("ping", false);
+      halo.getBoundingClientRect();
+      halo.classList.toggle("ping", true);
+    }
     $("#cycleDetail").innerHTML = `<strong>${i + 1}. ${STEPS[i].name}</strong>${STEPS[i].text}`;
+    $("#cycleMap").innerHTML = STEPS[i].map;
   }
-  function schedule() {
-    clearTimeout(cycTimer);
-    if (cycPlaying && cycVisible) cycTimer = setTimeout(() => { showStep((cycIdx + 1) % 3); schedule(); }, 3200);
+  function frame(ts) {
+    const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0;
+    last = ts;
+    phaseT += dt * 1000;
+    if (!cycPlaying) boost -= dt * 1000;
+    if (cycPlaying && phaseT >= STEP_MS) showStep((cycIdx + 1) % 3);
+    Scene.step(dt, cycIdx, phaseT);
+    Scene.render(cycIdx, phaseT);
+    const running = cycVisible && (cycPlaying || boost > 0);
+    updateProgress(running);
+    if (running) raf = requestAnimationFrame(frame);
+    else { raf = 0; last = 0; }
+  }
+  function kick() {
+    if (!raf && cycVisible && (cycPlaying || boost > 0)) { last = 0; raf = requestAnimationFrame(frame); }
   }
   function setCycPlaying(on) {
     cycPlaying = on;
-    cycToggle.textContent = on ? "Pause" : "Play";
+    cycToggle.innerHTML = on
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>Pause'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>Play';
+    liveBadge.classList.toggle("is-paused", !on);
+    if (!on && !(boost > 0)) updateProgress(false);
     cycToggle.setAttribute("aria-pressed", String(on));
-    schedule();
+    kick();
   }
-  $$(".cstep", cycle).forEach((b) => b.addEventListener("click", () => { setCycPlaying(false); showStep(+b.dataset.step); }));
+  $$(".cstep", cycle).forEach((b) => b.addEventListener("click", () => {
+    setCycPlaying(false);
+    showStep(+b.dataset.step);
+    if (reduceMotion) { Scene.snap(cycIdx); Scene.render(cycIdx, 500); }
+    else { boost = STEP_MS; kick(); }
+  }));
   cycToggle.addEventListener("click", () => setCycPlaying(!cycPlaying));
   if ("IntersectionObserver" in window) {
-    new IntersectionObserver((es) => { cycVisible = es[0].isIntersecting; schedule(); }).observe(cycle);
-  } else { cycVisible = true; }
+    new IntersectionObserver((es) => {
+      const e = es[0];
+      cycVisible = e.isIntersecting;
+      if (!entered && e.intersectionRatio >= 0.3) {
+        // first time it is really on screen: spin in and start again from step 1
+        entered = true;
+        cycle.classList.add("entered");
+        showStep(0);
+      }
+      kick();
+    }, { threshold: [0, 0.3] }).observe(cycle);
+  } else { cycVisible = true; entered = true; cycle.classList.add("entered"); }
+
+  // Links from the loop into §2 / §3 / §4
+  function goTo(target) {
+    const [kind, id] = target.split(":");
+    const behavior = reduceMotion ? "auto" : "smooth";
+    if (kind === "form") {
+      pinnedK = id; focusK(id);
+      $("#chevrons").scrollIntoView({ behavior, block: "center" });
+    } else if (kind === "arch") {
+      if (VARIANT_ARCH[state.selected].off.includes(id)) setSelected("cpl");
+      stopFlow(); pinnedPart = id; showPart(id);
+      arch.scrollIntoView({ behavior, block: "center" });
+    } else {
+      document.getElementById(id).scrollIntoView({ behavior, block: "start" });
+    }
+  }
+  $("#cycleMap").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-goto]");
+    if (b) goTo(b.dataset.goto);
+  });
+
+  Scene.warmup(2);
   showStep(0);
+  Scene.render(0, 400);
   setCycPlaying(cycPlaying);
 
   /* ------------------------------------------------------------------------

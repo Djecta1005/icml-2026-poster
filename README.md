@@ -5,10 +5,10 @@ Interactive companion page for the poster **Belief-Aware Decision Transformers f
 The page follows the printed poster's layout, colours and section numbering, and adds interactivity:
 
 - **Formulation:** the POMDP tuple 𝒫 = (S, A, T, R, Ω, O, γ) is linked to the coloured chevrons.
+- **The loop:** the poster's central circle (*Gather → Analyse → Decide*) sits between Formulation and Approach and overlaps both panels, as the circle does on the poster. Inside it, a schematic well is steered through a reservoir in step with the loop, and each step links to the matching part of §2 and §3.
 - **Approach:**
   - The architecture diagram is clickable, with a "Play forward pass" walkthrough.
   - A variant switcher (DT / Parallel / Coupled / Strict) rewires the diagram and highlights the chosen variant in the results.
-  - An animated *Gather → Analyse → Decide* geosteering loop.
 - **Results:**
   - Dot-and-whisker charts with tooltips.
   - An online belief-correction chart with a correction-rate slider.
